@@ -7,7 +7,8 @@ from .utils import load_state_dict_from_url
 from torch.autograd import Function
 import math
 
-__all__ = []
+__all__ = ["EfficientNet", "efficientnet_b0", "efficientnet_b1", "efficientnet_b2", "efficientnet_b3",
+           "efficientnet_b4", "efficientnet_b5", "efficientnet_b6", "efficientnet_b7"]
 
 config_dict = {
     # width_ratio, depth_ratio, resolution, dropout_rate
