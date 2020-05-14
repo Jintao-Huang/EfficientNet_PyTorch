@@ -6,7 +6,6 @@
 使用的预训练模型来源(Source of the pre-training model used):
     https://github.com/lukemelas/EfficientNet-PyTorch
 
-<<<<<<< HEAD
 labels_map.txt来源(Source of labels_map.txt):
     https://github.com/lukemelas/EfficientNet-PyTorch/blob/master/examples/simple/labels_map.txt
 
