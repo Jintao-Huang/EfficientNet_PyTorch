@@ -23,4 +23,4 @@ for i in range(20):
     optim.zero_grad()
     loss.backward()
     optim.step()
-    print(loss)
+    print("loss: %f" % loss.item())
