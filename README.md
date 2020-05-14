@@ -7,3 +7,12 @@
 使用的预训练模型来源(Source of the pre-training model used):
     https://github.com/lukemelas/EfficientNet-PyTorch
 
+
+# 使用方式
+
+直接运行examples.py
+
+```
+python3 examples.py
+```
+
