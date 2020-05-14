@@ -203,7 +203,7 @@ class InvertedResidual(nn.Module):
         if hasattr(self, 'expand_conv'):
             x = self.expand_conv(x)
         x = self.depthwise_conv(x)
-        if hasattr(self, 'se'):
+        if hasattr(self, 'squeeze_excitation'):
             x = self.squeeze_excitation(x) * x  # se is like a door(sigmoid)
         x = self.pointwise_conv(x)
 
@@ -251,6 +251,7 @@ class EfficientNet(nn.Module):
         for i, setting in enumerate(inverted_residual_setting):
             self.__setattr__('layer%d' % (i + 1),
                              self._make_layers(setting, image_size, bn_momentum, bn_eps))
+
         in_channels = inverted_residual_setting[-1][3]
         out_channels = in_channels * 4
         self.conv_last = ConvBNSwish(in_channels, out_channels, 1, 1, 1, False,
