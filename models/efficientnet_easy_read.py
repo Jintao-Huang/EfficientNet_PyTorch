@@ -7,7 +7,6 @@
 import torch
 import torch.nn as nn
 from .utils import load_state_dict_from_url
-from torch.autograd import Function
 import math
 
 __all__ = ["load_params_by_order", "load_params_from_file_by_order",

@@ -116,7 +116,10 @@ def drop_connect(x, drop_p, training):
 
 
 class SwishImplement(Function):
-    """output = x * sigmoid(x)"""
+    """output = x * sigmoid(x)
+
+    内存更高效、但是运算速度可能会略下降
+    Memory is more efficient, but the computing speed may be slightly reduced"""
 
     @staticmethod
     def forward(ctx, x):
