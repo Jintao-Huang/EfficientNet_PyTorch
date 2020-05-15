@@ -207,8 +207,10 @@ class InvertedResidual(nn.Module):
             x = self.expand_conv(x)
         x = self.depthwise_conv(x)
         if hasattr(self, 'squeeze_excitation'):
-            x = torch.mean(x, dim=(2, 3), keepdim=True)
-            x = torch.sigmoid(self.squeeze_excitation(x)) * x  # se is like a door(sigmoid)
+            z = torch.mean(x, dim=(2, 3), keepdim=True)
+            z = torch.sigmoid(self.squeeze_excitation(z))
+            x = z * x  # se is like a door(sigmoid)
+            del z
         x = self.pointwise_conv(x)
 
         if self.id_skip and self.stride == 1 and self.in_channels == self.out_channels:
