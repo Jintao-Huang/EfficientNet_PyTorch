@@ -159,6 +159,9 @@ class ConvBNSwish(nn.Sequential):
 
 
 class InvertedResidual(nn.Module):
+    """Mobile Inverted Residual Bottleneck Block
+
+    also be called MBConv or MBConvBlock"""
     def __init__(self, in_channels, out_channels, kernel_size, expand_ratio, id_skip, stride, se_ratio,
                  bn_momentum, bn_eps, image_size,
                  drop_connect_rate):
