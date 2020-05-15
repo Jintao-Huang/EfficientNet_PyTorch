@@ -1,5 +1,8 @@
 # author: Jintao Huang
 # date: 2020-5-14
+# 此版本易于阅读，但是效率较低。项目使用请使用 `efficientnet.py`
+# This version is easy to read, but less efficient.
+# Please use `efficientnet.py` in project.
 
 import torch
 import torch.nn as nn
@@ -115,25 +118,9 @@ def drop_connect(x, drop_p, training):
     return x / keep_p * keep_tensors
 
 
-class SwishImplement(Function):
-    """output = x * sigmoid(x)"""
-
-    @staticmethod
-    def forward(ctx, x):
-        ctx.save_for_backward(x)
-        return x * torch.sigmoid(x)
-
-    @staticmethod
-    def backward(ctx, output_grad):
-        """d_output / dx = x * sigmoid'(x) + x' + sigmoid(x)"""
-        x, = ctx.saved_tensors
-        sigmoid_x = torch.sigmoid(x)
-        return output_grad * (sigmoid_x * (x * (1 - sigmoid_x) + 1))
-
-
 class Swish(nn.Module):
     def forward(self, x):
-        return SwishImplement().apply(x)
+        return x * torch.sigmoid(x)
 
 
 class ConvSamePadding2d(nn.Sequential):
@@ -191,9 +178,11 @@ class InvertedResidual(nn.Module):
             se_channels = int(in_channels * se_ratio)
             # a Squeeze and Excitation layer
             self.squeeze_excitation = nn.Sequential(
+                nn.AdaptiveAvgPool2d(1),
                 ConvSamePadding2d(neck_channels, se_channels, 1, 1, 1, True, image_size),
                 Swish(),
                 ConvSamePadding2d(se_channels, neck_channels, 1, 1, 1, True, image_size),
+                nn.Sigmoid(),
             )
 
         self.pointwise_conv = nn.Sequential(
@@ -207,8 +196,7 @@ class InvertedResidual(nn.Module):
             x = self.expand_conv(x)
         x = self.depthwise_conv(x)
         if hasattr(self, 'squeeze_excitation'):
-            x = torch.mean(x, dim=(2, 3), keepdim=True)
-            x = torch.sigmoid(self.squeeze_excitation(x)) * x  # se is like a door(sigmoid)
+            x = self.squeeze_excitation(x) * x  # se is like a door(sigmoid)
         x = self.pointwise_conv(x)
 
         if self.id_skip and self.stride == 1 and self.in_channels == self.out_channels:
@@ -260,6 +248,7 @@ class EfficientNet(nn.Module):
         out_channels = in_channels * 4
         self.conv_last = ConvBNSwish(in_channels, out_channels, 1, 1, 1, False,
                                      bn_momentum, bn_eps, image_size)
+        self.avg_pool = nn.AdaptiveAvgPool2d(1)
         self.dropout = nn.Dropout(dropout_rate)
         self.fc = nn.Linear(out_channels, num_classes)
 
@@ -268,7 +257,8 @@ class EfficientNet(nn.Module):
         for i in range(len(self.inverted_residual_setting)):
             x = self.__getattr__('layer%d' % (i + 1))(x)
         x = self.conv_last(x)
-        x = torch.mean(x, dim=(2, 3))
+        x = self.avg_pool(x)
+        x = torch.flatten(x, 1)
         x = self.dropout(x)
         x = self.fc(x)
         return x
