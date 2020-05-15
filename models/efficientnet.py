@@ -7,7 +7,8 @@ from .utils import load_state_dict_from_url
 from torch.autograd import Function
 import math
 
-__all__ = ["EfficientNet", "efficientnet_b0", "efficientnet_b1", "efficientnet_b2", "efficientnet_b3",
+__all__ = ["load_params_by_order", "load_params_from_file_by_order",
+           "EfficientNet", "efficientnet_b0", "efficientnet_b1", "efficientnet_b2", "efficientnet_b3",
            "efficientnet_b4", "efficientnet_b5", "efficientnet_b6", "efficientnet_b7"]
 
 config_dict = {
@@ -162,6 +163,7 @@ class InvertedResidual(nn.Module):
     """Mobile Inverted Residual Bottleneck Block
 
     also be called MBConv or MBConvBlock"""
+
     def __init__(self, in_channels, out_channels, kernel_size, expand_ratio, id_skip, stride, se_ratio,
                  bn_momentum, bn_eps, image_size,
                  drop_connect_rate):
