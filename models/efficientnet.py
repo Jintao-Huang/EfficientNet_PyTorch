@@ -210,7 +210,7 @@ class InvertedResidual(nn.Module):
             x = self.expand_conv(x)
         x = self.depthwise_conv(x)
         if hasattr(self, 'squeeze_excitation'):
-            z = torch.mean(x, dim=(2, 3), keepdim=True)
+            z = torch.mean(x, dim=(2, 3), keepdim=True)  # AdaptiveAvgPool2d
             z = torch.sigmoid(self.squeeze_excitation(z))
             x = z * x  # se is like a door(sigmoid)
             del z
