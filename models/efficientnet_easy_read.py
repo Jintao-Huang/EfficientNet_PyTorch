@@ -240,8 +240,7 @@ class EfficientNet(nn.Module):
         out_channels = inverted_residual_setting[0][2]
         self.conv_first = ConvBNSwish(3, out_channels, 3, 2, 1, False, bn_momentum, bn_eps, image_size)
         for i, setting in enumerate(inverted_residual_setting):
-            self.__setattr__('layer%d' % (i + 1),
-                             self._make_layers(setting, image_size, bn_momentum, bn_eps))
+            setattr(self, 'layer%d' % (i + 1), self._make_layers(setting, image_size, bn_momentum, bn_eps))
 
         in_channels = inverted_residual_setting[-1][3]
         out_channels = in_channels * 4
@@ -254,7 +253,7 @@ class EfficientNet(nn.Module):
     def forward(self, x):
         x = self.conv_first(x)
         for i in range(len(self.inverted_residual_setting)):
-            x = self.__getattr__('layer%d' % (i + 1))(x)
+            x = getattr(self, 'layer%d' % (i + 1))(x)
         x = self.conv_last(x)
         x = self.avg_pool(x)
         x = torch.flatten(x, 1)
