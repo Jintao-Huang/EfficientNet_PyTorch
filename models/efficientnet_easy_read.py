@@ -211,10 +211,8 @@ class EfficientNet(nn.Module):
                  b0_inverted_residual_setting=None,
                  bn_momentum=0.01, bn_eps=0.001, channels_divisor=8, min_channels=None, drop_connect_rate=0.2):
         super(EfficientNet, self).__init__()
-
         min_channels = min_channels or channels_divisor
-        self.block_idx = 0
-        self.drop_connect_rate = drop_connect_rate
+
         if b0_inverted_residual_setting is None:
             # num_repeat, input_channels, output_channels will change.
             b0_inverted_residual_setting = [
@@ -231,8 +229,10 @@ class EfficientNet(nn.Module):
         inverted_residual_setting = self._calculate_inverted_residual_setting(
             b0_inverted_residual_setting, width_ratio, depth_ratio, channels_divisor, min_channels)
         self.inverted_residual_setting = inverted_residual_setting
-        # calculate total_block_num
-        self.total_block_num = 0  # 计数器(counter)
+        # calculate total_block_num. 用于计算drop_connect_rate
+        self.drop_connect_rate = drop_connect_rate
+        self.block_idx = 0
+        self.total_block_num = 0
         for setting in inverted_residual_setting:
             self.total_block_num += setting[1]
 
