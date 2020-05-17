@@ -64,17 +64,7 @@ def load_params_from_file_by_order(model, filename, strict=True):
     """The parameter name of the pre-training model is different from the parameter name of the model"""
     load_state_dict = torch.load(filename)
 
-    load_keys = list(load_state_dict.keys())
-    model_keys = list(model.state_dict().keys())
-    j = 0  # model
-    for i in range(len(load_keys)):
-        load_key = load_keys[i]
-        model_key = model_keys[i]
-        if "num_batches_tracked" not in load_key:
-            load_state_dict[model_key] = load_state_dict[load_key]
-            j += 1
-        load_state_dict.pop(load_key)
-    return model.load_state_dict(load_state_dict, strict)
+    return load_params_by_order(model, load_state_dict, strict)
 
 
 def get_same_padding(in_size, kernel_size, stride):
