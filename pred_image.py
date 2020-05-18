@@ -18,7 +18,8 @@ with Image.open(image_fname) as x:
     x = preprocess([x], 224).to(device)
 
 # read labels
-labels_map = json.load(open('labels_map.txt'))
+with open('imagenet/labels_list.txt') as f:
+    labels_map = json.load(f)
 
 # pred
 model = efficientnet_b0(pretrained=True).to(device)
@@ -30,4 +31,4 @@ print("Image Pred: %s" % image_fname)
 print("-------------------------------------")
 for value, idx in zip(values[0], indices[0]):
     value, idx = value.item(), idx.item()
-    print("%-75s%.2f%%" % (labels_map[str(idx)], value * 100))
+    print("%-75s%.2f%%" % (labels_map[idx], value * 100))
