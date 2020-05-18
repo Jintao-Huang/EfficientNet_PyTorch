@@ -13,7 +13,7 @@ __all__ = ["preprocess", "load_params_by_order", "load_params_from_file_by_order
            "efficientnet_b4", "efficientnet_b5", "efficientnet_b6", "efficientnet_b7"]
 
 config_dict = {
-    # width_ratio, depth_ratio, resolution, dropout_rate
+    # width_ratio, depth_ratio, resolution[% 32 may be not == 0], dropout_rate
     'efficientnet_b0': (1.0, 1.0, 224, 0.2),
     'efficientnet_b1': (1.0, 1.1, 240, 0.2),
     'efficientnet_b2': (1.1, 1.2, 260, 0.3),
@@ -104,9 +104,9 @@ def get_same_padding(in_size, kernel_size, stride):
     :return: padding: tuple(left, right, top, bottom)
     """
     # 1. 输入处理
-    in_h, in_w = in_size if isinstance(in_size, (tuple, list)) else (in_size, in_size)
-    kernel_h, kernel_w = kernel_size if isinstance(kernel_size, (tuple, list)) else (kernel_size, kernel_size)
-    stride_h, stride_w = stride if isinstance(stride, (tuple, list)) else (stride, stride)
+    in_h, in_w = (in_size, in_size) if isinstance(in_size, int) else in_size
+    kernel_h, kernel_w = (kernel_size, kernel_size) if isinstance(kernel_size, int) else kernel_size
+    stride_h, stride_w = (stride, stride) if isinstance(stride, int) else stride
     out_h, out_w = math.ceil(in_h / stride_h), math.ceil(in_w / stride_w)
     # 2. 计算
     pad_h = max((out_h - 1) * stride_h + kernel_h - in_h, 0)
@@ -150,13 +150,13 @@ class Swish(nn.Module):
         return SwishImplement().apply(x)
 
 
-class ConvSamePadding2d(nn.Sequential):
+class Conv2dStaticSamePadding(nn.Sequential):
     """Conv using 'same' padding in tensorflow"""
 
     def __init__(self, in_channels, out_channels, kernel_size, stride, groups, bias,
                  image_size):
         padding = get_same_padding(image_size, kernel_size, stride)
-        super(ConvSamePadding2d, self).__init__(
+        super(Conv2dStaticSamePadding, self).__init__(
             nn.ZeroPad2d(padding),
             nn.Conv2d(in_channels, out_channels, kernel_size, stride, groups=groups, bias=bias)
         )
@@ -167,7 +167,7 @@ class ConvBNSwish(nn.Sequential):
     def __init__(self, in_channels, out_channels, kernel_size, stride, groups, bias,
                  bn_momentum, bn_eps, image_size):
         super(ConvBNSwish, self).__init__(
-            ConvSamePadding2d(in_channels, out_channels, kernel_size, stride, groups, bias, image_size),
+            Conv2dStaticSamePadding(in_channels, out_channels, kernel_size, stride, groups, bias, image_size),
             nn.BatchNorm2d(out_channels, bn_eps, bn_momentum),
             Swish()
         )
@@ -205,13 +205,13 @@ class InvertedResidual(nn.Module):
             se_channels = int(in_channels * se_ratio)
             # a Squeeze and Excitation layer
             self.squeeze_excitation = nn.Sequential(
-                ConvSamePadding2d(neck_channels, se_channels, 1, 1, 1, True, image_size),
+                Conv2dStaticSamePadding(neck_channels, se_channels, 1, 1, 1, True, image_size),
                 Swish(),
-                ConvSamePadding2d(se_channels, neck_channels, 1, 1, 1, True, image_size),
+                Conv2dStaticSamePadding(se_channels, neck_channels, 1, 1, 1, True, image_size),
             )
 
         self.pointwise_conv = nn.Sequential(
-            ConvSamePadding2d(neck_channels, out_channels, 1, 1, 1, False, image_size),
+            Conv2dStaticSamePadding(neck_channels, out_channels, 1, 1, 1, False, image_size),
             nn.BatchNorm2d(out_channels, bn_eps, bn_momentum),
         )
 
