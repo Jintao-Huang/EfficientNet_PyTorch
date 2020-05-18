@@ -74,8 +74,8 @@ def load_params_by_order(model, load_state_dict, strict=True):
     j = 0  # model
     for i in range(len(load_keys)):
         load_key = load_keys[i]
-        model_key = model_keys[i]
-        if "num_batches_tracked" not in load_key:
+        model_key = model_keys[j]
+        if "num_batches_tracked" not in load_key or "num_batches_tracked" in model_key:
             load_state_dict[model_key] = load_state_dict[load_key]
             j += 1
         load_state_dict.pop(load_key)
