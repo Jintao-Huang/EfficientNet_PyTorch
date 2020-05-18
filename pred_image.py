@@ -2,9 +2,8 @@
 # date: 2020-5-14
 
 import json
-from models.efficientnet import efficientnet_b0
+from models.efficientnet import efficientnet_b0, preprocess
 import torch
-import torchvision.transforms.transforms as transforms
 from PIL import Image
 
 # if torch.cuda.is_available():
@@ -16,11 +15,7 @@ device = torch.device('cpu')
 # read images
 image_fname = "images/1.jpg"
 with Image.open(image_fname) as x:
-    x = transforms.Compose([
-        transforms.Resize(224),
-        transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-    ])(x)[None].to(device)
+    x = preprocess([x], 224).to(device)
 
 # read labels
 labels_map = json.load(open('labels_map.txt'))

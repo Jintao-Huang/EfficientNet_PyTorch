@@ -6,8 +6,9 @@ import torch.nn as nn
 from .utils import load_state_dict_from_url
 from torch.autograd import Function
 import math
+import torchvision.transforms.transforms as trans
 
-__all__ = ["load_params_by_order", "load_params_from_file_by_order",
+__all__ = ["preprocess", "load_params_by_order", "load_params_from_file_by_order",
            "EfficientNet", "efficientnet_b0", "efficientnet_b1", "efficientnet_b2", "efficientnet_b3",
            "efficientnet_b4", "efficientnet_b5", "efficientnet_b6", "efficientnet_b7"]
 
@@ -43,6 +44,26 @@ model_urls = {
     'efficientnet_b7':
         'https://github.com/lukemelas/EfficientNet-PyTorch/releases/download/1.0/efficientnet-b7-dcc49843.pth',
 }
+
+
+def preprocess(images, image_size):
+    """预处理
+
+    :param images: List[PIL.Image]
+    :param image_size: int
+    :return: shape(N, C, H, W)
+    """
+    output = []
+    trans_func = trans.Compose([
+        trans.Resize(image_size),
+        trans.ToTensor(),
+        trans.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+    ])
+    for image in images:
+        if image.mode != "RGB":
+            image = image.convert(mode="RGB")
+        output.append(trans_func(image))
+    return torch.stack(output, dim=0)
 
 
 def load_params_by_order(model, load_state_dict, strict=True):

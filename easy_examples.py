@@ -10,7 +10,7 @@ if torch.cuda.is_available():
 else:
     device = torch.device('cpu')
 
-x = torch.rand(1, 3, 600, 600).to(device)
+x = torch.rand(1, 3, 600, 600).to(device)  # 假设已经经过preprocess()
 y_true = torch.randint(1000, (1,)).to(device)
 
 model = efficientnet_b0(pretrained=True).to(device)
