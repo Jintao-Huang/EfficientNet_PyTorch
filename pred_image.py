@@ -18,7 +18,7 @@ with Image.open(image_fname) as x:
     x = preprocess([x], 224).to(device)
 
 # read labels
-with open('imagenet/labels_list.txt') as f:
+with open('imagenet_labels/labels_list.txt') as f:
     labels_map = json.load(f)
 
 # pred
