@@ -1,8 +1,7 @@
 # author: Jintao Huang
 # date: 2020-5-14
 # 此版本易于阅读，但是效率较低。项目使用请使用 `efficientnet.py`
-# This version is easy to read, but less efficient.
-# Please use `efficientnet.py` in project.
+# This version is easy to read, but less efficient. Please use `efficientnet.py` in project.
 
 import torch
 import torch.nn as nn
@@ -49,7 +48,7 @@ model_urls = {
 
 
 def preprocess(images, image_size):
-    """预处理
+    """预处理(preprocessing)
 
     :param images: List[PIL.Image]
     :param image_size: int
@@ -240,7 +239,7 @@ class EfficientNet(nn.Module):
         inverted_residual_setting = self._calculate_inverted_residual_setting(
             b0_inverted_residual_setting, width_ratio, depth_ratio, channels_divisor, min_channels)
         self.inverted_residual_setting = inverted_residual_setting
-        # calculate total_block_num. 用于计算drop_connect_rate
+        # calculate total_block_num. Used to calculate the drop_connect_rate
         self.drop_connect_rate = drop_connect_rate
         self.block_idx = 0
         self.total_block_num = 0
@@ -306,12 +305,12 @@ class EfficientNet(nn.Module):
 
 
 def _efficientnet(model_name, pretrained=False, progress=True, num_classes=1000, **kwargs):
-    model = EfficientNet(num_classes, *config_dict[model_name])
+    strict = kwargs.pop("strict", True)
+    model = EfficientNet(num_classes, *config_dict[model_name], **kwargs)
     if pretrained:
-        state_dict = load_state_dict_from_url(model_urls[model_name],
-                                              progress=progress)
+        state_dict = load_state_dict_from_url(model_urls[model_name], progress=progress)
+        load_params_by_order(model, state_dict, strict)
 
-        load_params_by_order(model, state_dict)
     return model
 
 
