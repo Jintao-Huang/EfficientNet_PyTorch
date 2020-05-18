@@ -162,11 +162,11 @@ class Conv2dStaticSamePadding(nn.Sequential):
         )
 
 
-class ConvBNSwish(nn.Sequential):
+class Conv2dBNSwish(nn.Sequential):
 
     def __init__(self, in_channels, out_channels, kernel_size, stride, groups, bias,
                  bn_momentum, bn_eps, image_size, norm_layer):
-        super(ConvBNSwish, self).__init__(
+        super(Conv2dBNSwish, self).__init__(
             Conv2dStaticSamePadding(in_channels, out_channels, kernel_size, stride, groups, bias, image_size),
             norm_layer(out_channels, bn_eps, bn_momentum),
             Swish()
@@ -195,11 +195,11 @@ class InvertedResidual(nn.Module):
 
         neck_channels = int(in_channels * expand_ratio)
         if expand_ratio > 1:
-            self.expand_conv = ConvBNSwish(in_channels, neck_channels, 1, 1,
-                                           1, False, bn_momentum, bn_eps, image_size, norm_layer)
+            self.expand_conv = Conv2dBNSwish(in_channels, neck_channels, 1, 1,
+                                             1, False, bn_momentum, bn_eps, image_size, norm_layer)
 
-        self.depthwise_conv = ConvBNSwish(neck_channels, neck_channels, kernel_size, stride,
-                                          neck_channels, False, bn_momentum, bn_eps, image_size, norm_layer)
+        self.depthwise_conv = Conv2dBNSwish(neck_channels, neck_channels, kernel_size, stride,
+                                            neck_channels, False, bn_momentum, bn_eps, image_size, norm_layer)
         if (se_ratio is not None) and (0 < se_ratio <= 1):
             se_channels = int(in_channels * se_ratio)
             # a Squeeze and Excitation layer
@@ -268,14 +268,14 @@ class EfficientNet(nn.Module):
 
         # create modules
         out_channels = inverted_residual_setting[0][2]
-        self.conv_first = ConvBNSwish(3, out_channels, 3, 2, 1, False, bn_momentum, bn_eps, image_size, norm_layer)
+        self.conv_first = Conv2dBNSwish(3, out_channels, 3, 2, 1, False, bn_momentum, bn_eps, image_size, norm_layer)
         for i, setting in enumerate(inverted_residual_setting):
             setattr(self, 'layer%d' % (i + 1), self._make_layers(setting, image_size, bn_momentum, bn_eps, norm_layer))
 
         in_channels = inverted_residual_setting[-1][3]
         out_channels = in_channels * 4
-        self.conv_last = ConvBNSwish(in_channels, out_channels, 1, 1, 1, False,
-                                     bn_momentum, bn_eps, image_size, norm_layer)
+        self.conv_last = Conv2dBNSwish(in_channels, out_channels, 1, 1, 1, False,
+                                       bn_momentum, bn_eps, image_size, norm_layer)
         self.dropout = nn.Dropout(dropout_rate)
         self.fc = nn.Linear(out_channels, num_classes)
 
