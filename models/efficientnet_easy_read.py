@@ -307,7 +307,11 @@ class EfficientNet(nn.Module):
 
 def _efficientnet(model_name, pretrained=False, progress=True, num_classes=1000, **kwargs):
     strict = kwargs.pop("strict", True)
-    model = EfficientNet(num_classes, *config_dict[model_name], **kwargs)
+    config = dict(zip(('width_ratio', 'depth_ratio', 'image_size', 'dropout_rate'), config_dict[model_name]))
+    for key, value in config.items():
+        kwargs.setdefault(key, value)
+
+    model = EfficientNet(num_classes, **kwargs)
     if pretrained:
         state_dict = load_state_dict_from_url(model_urls[model_name], progress=progress)
         load_params_by_order(model, state_dict, strict)
