@@ -70,6 +70,8 @@ def load_params_by_order(model, load_state_dict, strict=True):
     """The parameter name of the pre-training model is different from the parameter name of the model"""
     load_keys = list(load_state_dict.keys())
     model_keys = list(model.state_dict().keys())
+    if strict:
+        assert len(load_keys) == len(model_keys)
     for load_key, model_key in zip(load_keys, model_keys):
         load_state_dict[model_key] = load_state_dict.pop(load_key)
 
@@ -232,7 +234,7 @@ class EfficientNet(nn.Module):
     def __init__(self, num_classes=1000,
                  width_ratio=1.0, depth_ratio=1.0, image_size=224, dropout_rate=0.2,
                  b0_inverted_residual_setting=None,
-                 bn_momentum=0.01, bn_eps=0.001, channels_divisor=8, min_channels=None, drop_connect_rate=0.2,
+                 bn_momentum=1e-2, bn_eps=1e-3, channels_divisor=8, min_channels=None, drop_connect_rate=0.2,
                  norm_layer=None):
         super(EfficientNet, self).__init__()
         min_channels = min_channels or channels_divisor
@@ -292,11 +294,15 @@ class EfficientNet(nn.Module):
         for i in range(len(b0_inverted_residual_setting)):
             setting = inverted_residual_setting[i]
             # change input_channels, output_channels (width)  round
-            in_channels, out_channels = setting[2] * width_ratio, setting[3] * width_ratio
+            setting[2], setting[3] = setting[2] * width_ratio, setting[3] * width_ratio
             in_channels, out_channels = \
-                max(min_channels, int(in_channels + channels_divisor / 2) // channels_divisor * channels_divisor), \
-                max(min_channels, int(out_channels + channels_divisor / 2) // channels_divisor * channels_divisor)
-            setting[2], setting[3] = int(in_channels), int(out_channels)
+                int(max(min_channels, int(setting[2] + channels_divisor / 2) // channels_divisor * channels_divisor)), \
+                int(max(min_channels, int(setting[3] + channels_divisor / 2) // channels_divisor * channels_divisor))
+            if in_channels < 0.9 * setting[2]:  # prevent rounding by more than 10%
+                in_channels += channels_divisor
+            if out_channels < 0.9 * setting[3]:
+                out_channels += channels_divisor
+            setting[2], setting[3] = in_channels, out_channels
             # change num_repeat (depth)  ceil
             setting[1] = int(math.ceil(setting[1] * depth_ratio))
         return inverted_residual_setting
