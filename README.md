@@ -10,8 +10,10 @@ https://arxiv.org/pdf/1905.11946.pdf
 2. 代码参考(reference code):  
  https://github.com/lukemelas/EfficientNet-PyTorch  
 
-3. 使用的预训练模型来源(Source of the pre-training model used):  
-https://github.com/lukemelas/EfficientNet-PyTorch
+3. 使用的预训练模型来源(Source of the pre-training model used):   
+https://github.com/lukemelas/EfficientNet-PyTorch  
+由于我对模型进行了调整，所以我修改了原预训练模型的state_dict的key值，并进行了发布.  
+Since I adjusted the model, I modified the state_dict key value of the original pretraining model and release it.  
 
 4. labels_map.txt来源(Source of labels_map.txt):  
 https://github.com/lukemelas/EfficientNet-PyTorch/blob/master/examples/simple/labels_map.txt
@@ -27,4 +29,8 @@ python3 pred_image.py
 ```
 python3 easy_examples.py
 ```
+
+## 性能
+
+见`docs/`文件夹
 
