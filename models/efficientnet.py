@@ -303,47 +303,46 @@ class EfficientNet(nn.Module):
         return nn.Sequential(*layers)
 
 
-def _efficientnet(model_name, pretrained=False, progress=True, num_classes=1000, **kwargs):
-    strict = kwargs.pop("strict", True)
+def _efficientnet(model_name, pretrained=False, progress=True, num_classes=1000, norm_layer=None, **kwargs):
     config = dict(zip(('width_ratio', 'depth_ratio', 'image_size', 'dropout_rate'), config_dict[model_name]))
     for key, value in config.items():
         kwargs.setdefault(key, value)
 
-    model = EfficientNet(num_classes, **kwargs)
+    model = EfficientNet(num_classes, norm_layer=norm_layer, **kwargs)
     if pretrained:
         state_dict = load_state_dict_from_url(model_urls[model_name], progress=progress)
-        model.load_state_dict(state_dict, strict)
+        model.load_state_dict(state_dict)
 
     return model
 
 
-def efficientnet_b0(pretrained=False, progress=True, num_classes=1000, **kwargs):
-    return _efficientnet("efficientnet_b0", pretrained, progress, num_classes, **kwargs)
+def efficientnet_b0(pretrained=False, progress=True, num_classes=1000, norm_layer=None, **kwargs):
+    return _efficientnet("efficientnet_b0", pretrained, progress, num_classes, norm_layer, **kwargs)
 
 
-def efficientnet_b1(pretrained=False, progress=True, num_classes=1000, **kwargs):
-    return _efficientnet("efficientnet_b1", pretrained, progress, num_classes, **kwargs)
+def efficientnet_b1(pretrained=False, progress=True, num_classes=1000, norm_layer=None, **kwargs):
+    return _efficientnet("efficientnet_b1", pretrained, progress, num_classes, norm_layer, **kwargs)
 
 
-def efficientnet_b2(pretrained=False, progress=True, num_classes=1000, **kwargs):
-    return _efficientnet("efficientnet_b2", pretrained, progress, num_classes, **kwargs)
+def efficientnet_b2(pretrained=False, progress=True, num_classes=1000, norm_layer=None, **kwargs):
+    return _efficientnet("efficientnet_b2", pretrained, progress, num_classes, norm_layer, **kwargs)
 
 
-def efficientnet_b3(pretrained=False, progress=True, num_classes=1000, **kwargs):
-    return _efficientnet("efficientnet_b3", pretrained, progress, num_classes, **kwargs)
+def efficientnet_b3(pretrained=False, progress=True, num_classes=1000, norm_layer=None, **kwargs):
+    return _efficientnet("efficientnet_b3", pretrained, progress, num_classes, norm_layer, **kwargs)
 
 
-def efficientnet_b4(pretrained=False, progress=True, num_classes=1000, **kwargs):
-    return _efficientnet("efficientnet_b4", pretrained, progress, num_classes, **kwargs)
+def efficientnet_b4(pretrained=False, progress=True, num_classes=1000, norm_layer=None, **kwargs):
+    return _efficientnet("efficientnet_b4", pretrained, progress, num_classes, norm_layer, **kwargs)
 
 
-def efficientnet_b5(pretrained=False, progress=True, num_classes=1000, **kwargs):
-    return _efficientnet("efficientnet_b5", pretrained, progress, num_classes, **kwargs)
+def efficientnet_b5(pretrained=False, progress=True, num_classes=1000, norm_layer=None, **kwargs):
+    return _efficientnet("efficientnet_b5", pretrained, progress, num_classes, norm_layer, **kwargs)
 
 
-def efficientnet_b6(pretrained=False, progress=True, num_classes=1000, **kwargs):
-    return _efficientnet("efficientnet_b6", pretrained, progress, num_classes, **kwargs)
+def efficientnet_b6(pretrained=False, progress=True, num_classes=1000, norm_layer=None, **kwargs):
+    return _efficientnet("efficientnet_b6", pretrained, progress, num_classes, norm_layer, **kwargs)
 
 
-def efficientnet_b7(pretrained=False, progress=True, num_classes=1000, **kwargs):
-    return _efficientnet("efficientnet_b7", pretrained, progress, num_classes, **kwargs)
+def efficientnet_b7(pretrained=False, progress=True, num_classes=1000, norm_layer=None, **kwargs):
+    return _efficientnet("efficientnet_b7", pretrained, progress, num_classes, norm_layer, **kwargs)
