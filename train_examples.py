@@ -1,17 +1,20 @@
 # author: Jintao Huang
 # date: 2020-5-14
 
-from models.efficientnet import efficientnet_b0
+from models.efficientnet import efficientnet_b0, preprocess
 import torch
 import torch.nn as nn
+from PIL import Image
 
 if torch.cuda.is_available():
     device = torch.device('cuda')
 else:
     device = torch.device('cpu')
 
-x = torch.rand(1, 3, 600, 600).to(device)  # 假设已经经过preprocess()
-y_true = torch.randint(1000, (1,)).to(device)
+image_fname = "images/1.jpg"
+with Image.open(image_fname) as x:
+    x = preprocess([x], 224).to(device)
+y_true = torch.randint(0, 1000, (1,)).to(device)
 
 model = efficientnet_b0(pretrained=True).to(device)
 loss_func = nn.CrossEntropyLoss()
