@@ -28,21 +28,21 @@ config_dict = {
 
 model_urls = {
     'efficientnet_b0':
-        'https://github.com/Jintao-Huang/EfficientNet_PyTorch/releases/download/1.0/efficientnet-b0.pth',
+        'https://github.com/Jintao-Huang/EfficientNet_PyTorch/releases/download/1.0/efficientnet_b0-dbe1bd8e.pth',
     'efficientnet_b1':
-        'https://github.com/Jintao-Huang/EfficientNet_PyTorch/releases/download/1.0/efficientnet-b1.pth',
+        'https://github.com/Jintao-Huang/EfficientNet_PyTorch/releases/download/1.0/efficientnet_b1-b14fa8c5.pth',
     'efficientnet_b2':
-        'https://github.com/Jintao-Huang/EfficientNet_PyTorch/releases/download/1.0/efficientnet-b2.pth',
+        'https://github.com/Jintao-Huang/EfficientNet_PyTorch/releases/download/1.0/efficientnet_b2-c9400113.pth',
     'efficientnet_b3':
-        'https://github.com/Jintao-Huang/EfficientNet_PyTorch/releases/download/1.0/efficientnet-b3.pth',
+        'https://github.com/Jintao-Huang/EfficientNet_PyTorch/releases/download/1.0/efficientnet_b3-c3c993c0.pth',
     'efficientnet_b4':
-        'https://github.com/Jintao-Huang/EfficientNet_PyTorch/releases/download/1.0/efficientnet-b4.pth',
+        'https://github.com/Jintao-Huang/EfficientNet_PyTorch/releases/download/1.0/efficientnet_b4-2d749d8b.pth',
     'efficientnet_b5':
-        'https://github.com/Jintao-Huang/EfficientNet_PyTorch/releases/download/1.0/efficientnet-b5.pth',
+        'https://github.com/Jintao-Huang/EfficientNet_PyTorch/releases/download/1.0/efficientnet_b5-b417176a.pth',
     'efficientnet_b6':
-        'https://github.com/Jintao-Huang/EfficientNet_PyTorch/releases/download/1.0/efficientnet-b6.pth',
+        'https://github.com/Jintao-Huang/EfficientNet_PyTorch/releases/download/1.0/efficientnet_b6-0cd8f775.pth',
     'efficientnet_b7':
-        'https://github.com/Jintao-Huang/EfficientNet_PyTorch/releases/download/1.0/efficientnet-b7.pth',
+        'https://github.com/Jintao-Huang/EfficientNet_PyTorch/releases/download/1.0/efficientnet_b7-e9c9b785.pth',
 }
 
 
