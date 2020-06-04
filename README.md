@@ -31,10 +31,14 @@ python3 pred_image.py
 #### 2. 简单的训练例子(Simple training examples)
 
 ```
-python3 easy_examples.py
+python3 train_example.py
 ```
 
 ## 性能
 
-见`docs/`文件夹
+见`docs/`文件夹  
 
+## 运行环境(environment)
+
+torch 1.2.0  
+torchvision 0.4.0  
