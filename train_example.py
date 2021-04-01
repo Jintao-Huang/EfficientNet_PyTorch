@@ -1,5 +1,6 @@
 # author: Jintao Huang
 # date: 2020-5-14
+# This case applies to Debug to view the network architecture
 
 from models.efficientnet import efficientnet_b0, preprocess
 import torch

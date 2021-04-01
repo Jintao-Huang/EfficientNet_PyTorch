@@ -45,7 +45,7 @@ model_urls = {
 }
 
 
-def preprocess(images, image_size):
+def preprocess(images, image_size=224):
     """预处理(preprocessing)
 
     :param images: List[PIL.Image]
@@ -311,8 +311,12 @@ def _efficientnet(model_name, pretrained=False, progress=True, num_classes=1000,
     model = EfficientNet(num_classes, norm_layer=norm_layer, **kwargs)
     if pretrained:
         state_dict = load_state_dict_from_url(model_urls[model_name], progress=progress)
-        model.load_state_dict(state_dict)
-
+        strict = True
+        if num_classes != 1000:
+            state_dict.pop("fc.weight")
+            state_dict.pop("fc.bias")
+            strict = False
+        model.load_state_dict(state_dict, strict=strict)
     return model
 
 
