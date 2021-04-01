@@ -13,7 +13,7 @@ class AccCounter:
         self.acc_sum_list = None
 
     def init(self):
-        self.acc_sum_list = [(0., 0) for _ in range(self.labels)]
+        self.acc_sum_list = [[0., 0] for _ in range(len(self.labels))]
 
     def add(self, pred, target):
         """
@@ -24,6 +24,7 @@ class AccCounter:
         """
         pred = torch.argmax(pred, dim=1)
         for p, t in zip(pred, target):
+            p, t = p.item(), t.item()
             self.acc_sum_list[t][1] += 1
             self.acc_sum_list[t][0] += (p == t)
 

@@ -19,6 +19,7 @@ class Tester:
 
     def test(self, total=False):
         self.model.eval()
+        self.acc_counter.init()
         with torch.no_grad():
             for i, (x, target) in enumerate(self.test_loader):
                 x, target = to(x, target, self.device)
@@ -36,4 +37,4 @@ class Tester:
         print("Test | Samples: %d/%d (%.2f%%)" %
               (test_num_samples, self.num_samples,
                test_num_samples / self.num_samples * 100))
-        self.acc_counter.print_ap(acc_dict)
+        self.acc_counter.print_acc(acc_dict)
