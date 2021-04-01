@@ -10,12 +10,13 @@ from models.efficientnet import efficientnet_b1, preprocess
 import os
 from utils.detection import Trainer, Logger, Tester, Checker, Saver, LRScheduler, get_dataset_from_pickle, AccCounter
 from tensorboardX import SummaryWriter
+from utils.utils import frozen_layers
 
 batch_size = 64
-comment = "-b1,wd=4e-5,bs=32,lr=0.05"
+comment = "-b1,wd=4e-5,bs=64,lr=0.05"
 
 # --------------------------------
-dataset_dir = r'D:\datasets\Facial Expression Recognition\fer2013'
+dataset_dir = r'../fer2013'
 train_dir = os.path.join(dataset_dir, "Training")
 test_dir = os.path.join(dataset_dir, "PublicTest")
 pkl_folder = '../pkl/'
@@ -31,26 +32,24 @@ labels = [
 def lr_func(epoch):
     if 0 <= epoch < 1:
         return 1e-4
-    elif 1 <= epoch < 3:
+    elif 1 <= epoch < 2:
         return 1e-3
-    elif 3 <= epoch < 5:
+    elif 2 <= epoch < 4:
         return 0.01
-    elif 5 <= epoch < 10:
-        return 0.02
-    elif 10 <= epoch < 80:
+    elif 4 <= epoch < 6:
+        return 0.025
+    elif 6 <= epoch < 32:
         return 0.05
-    elif 80 <= epoch < 100:
+    elif 32 <= epoch < 37:
         return 0.02
-    elif 100 <= epoch < 110:
+    elif 37 <= epoch < 39:
         return 5e-3
-    elif 110 <= epoch < 115:
-        return 1e-3
-    elif 115 <= epoch < 120:
+    elif 39 <= epoch < 40:
         return 1e-4
 
 
 def transform(image):
-    return preprocess([image])[0]
+    return preprocess([image], 96)[0]
 
 
 def main():
@@ -58,7 +57,8 @@ def main():
         device = torch.device('cuda')
     else:
         device = torch.device('cpu')
-    model = efficientnet_b1(True, num_classes=len(labels))
+    model = efficientnet_b1(True, image_size=96, num_classes=len(labels))
+    frozen_layers(model, ["conv_first", "layer1", "layer2"])
     optim = torch.optim.SGD(model.parameters(), 0, 0.9, weight_decay=4e-5)
     train_dataset = get_dataset_from_pickle(os.path.join(train_dir, pkl_folder, train_pickle_fname), transform)
     test_dataset = get_dataset_from_pickle(os.path.join(test_dir, pkl_folder, test_pickle_fname), transform)
@@ -67,11 +67,11 @@ def main():
     logger = Logger(50, writer)
     checker = Checker(Tester(model, train_dataset, batch_size, device, acc_counter, 1000),
                       Tester(model, test_dataset, batch_size, device, acc_counter, 1000),
-                      Saver(model), logger, 8, 2)
+                      Saver(model), logger, 4, 0)
     lr_scheduler = LRScheduler(optim, lr_func)
     trainer = Trainer(model, optim, train_dataset, batch_size, device, lr_scheduler, logger, checker)
     print("配置: %s" % comment, flush=True)
-    trainer.train((0, 120))
+    trainer.train((0, 40))
     writer.close()
 
 
