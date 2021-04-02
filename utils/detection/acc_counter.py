@@ -37,7 +37,7 @@ class AccCounter:
     @staticmethod
     def print_acc(acc_dict):
         mean_acc = sum(acc_dict.values()) / len(acc_dict)
-        print("mean_ACC: %f" % mean_acc)
+        print("mean_ACC: %.4f%%" % mean_acc * 100)
         print("ACC: ")
         for label, acc in acc_dict.items():
             print("  %s: %.4f%%" % (label, acc * 100))

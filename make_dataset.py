@@ -13,20 +13,22 @@ test_dir = os.path.join(dataset_dir, "PublicTest")
 pkl_folder = '../pkl'
 train_pickle_fname = "images_targets_train.pkl"
 test_pickle_fname = "images_targets_test.pkl"
-
+labels = [
+    "anger", "disgust", "fear", "happy", "neutral", "sad", "surprised"
+]
 # --------------------------------
-xml_processor = XMLProcessor(train_dir)
+xml_processor = XMLProcessor(train_dir, labels)
 xml_processor.parse_dataset()
 xml_processor.test_dataset()
-pkl_dir = os.path.join(dataset_dir, pkl_folder)
+pkl_dir = os.path.join(train_dir , pkl_folder)
 pkl_path = os.path.join(pkl_dir, train_pickle_fname)
 os.makedirs(pkl_dir, exist_ok=True)
 save_to_pickle((xml_processor.image_path_list, xml_processor.target_list), pkl_path)
 # ------------------------------------------------
-xml_processor = XMLProcessor(test_dir)
+xml_processor = XMLProcessor(test_dir, labels)
 xml_processor.parse_dataset()
 xml_processor.test_dataset()
-pkl_dir = os.path.join(dataset_dir, pkl_folder)
+pkl_dir = os.path.join(test_dir, pkl_folder)
 pkl_path = os.path.join(pkl_dir, test_pickle_fname)
 os.makedirs(pkl_dir, exist_ok=True)
 save_to_pickle((xml_processor.image_path_list, xml_processor.target_list), pkl_path)
