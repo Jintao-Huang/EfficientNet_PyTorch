@@ -8,8 +8,8 @@ from torch.autograd import Function
 import math
 import torchvision.transforms.transforms as trans
 
-__all__ = ["preprocess", "EfficientNet", "efficientnet_b0", "efficientnet_b1", "efficientnet_b2", "efficientnet_b3",
-           "efficientnet_b4", "efficientnet_b5", "efficientnet_b6", "efficientnet_b7"]
+__all__ = ["config_dict", "std_preprocess", "EfficientNet", "efficientnet_b0", "efficientnet_b1", "efficientnet_b2",
+           "efficientnet_b3", "efficientnet_b4", "efficientnet_b5", "efficientnet_b6", "efficientnet_b7"]
 
 config_dict = {
     # width_ratio, depth_ratio, resolution[% 32 may be not == 0], dropout_rate
@@ -45,8 +45,8 @@ model_urls = {
 }
 
 
-def preprocess(images, image_size=224):
-    """预处理(preprocessing)
+def std_preprocess(images, image_size):
+    """标准预处理(preprocessing)
 
     :param images: List[PIL.Image]
     :param image_size: int
@@ -103,28 +103,27 @@ def drop_connect(x, drop_p, training):
     return x / keep_p * keep_tensors
 
 
-class SwishImplement(Function):
-    """output = x * sigmoid(x)
-
-    内存更高效、但是运算速度可能会略下降
-    Memory is more efficient, but the computing speed may be slightly reduced"""
-
-    @staticmethod
-    def forward(ctx, x):
-        ctx.save_for_backward(x)
-        return x * torch.sigmoid(x)
-
-    @staticmethod
-    def backward(ctx, output_grad):
-        """d_output / dx = x * sigmoid'(x) + x' + sigmoid(x)"""
-        x, = ctx.saved_tensors
-        sigmoid_x = torch.sigmoid(x)
-        return output_grad * (sigmoid_x * (x * (1 - sigmoid_x) + 1))
-
-
 class Swish(nn.Module):
+    class SwishImplement(Function):
+        """output = x * sigmoid(x)
+
+        内存更高效、但是运算速度可能会略下降
+        Memory is more efficient, but the computing speed may be slightly reduced"""
+
+        @staticmethod
+        def forward(ctx, x):
+            ctx.save_for_backward(x)
+            return x * torch.sigmoid(x)
+
+        @staticmethod
+        def backward(ctx, output_grad):
+            """d_output / dx = x * sigmoid'(x) + x' + sigmoid(x)"""
+            x, = ctx.saved_tensors
+            sigmoid_x = torch.sigmoid(x)
+            return output_grad * (sigmoid_x * (x * (1 - sigmoid_x) + 1))
+
     def forward(self, x):
-        return SwishImplement().apply(x)
+        return self.SwishImplement().apply(x)
 
 
 class Conv2dStaticSamePadding(nn.Sequential):
@@ -316,7 +315,7 @@ def _efficientnet(model_name, pretrained=False, progress=True, num_classes=1000,
             state_dict.pop("fc.weight")
             state_dict.pop("fc.bias")
             strict = False
-        model.load_state_dict(state_dict, strict=strict)
+        print(model.load_state_dict(state_dict, strict=strict))
     return model
 
 

@@ -1,27 +1,32 @@
 # Author: Jintao Huang
 # Time: 2020-6-7
-from torch.utils.data import DataLoader
 import torch
 import math
-from ..detection.utils import to
+from ..tools.utils import to
 
 
 class Tester:
-    def __init__(self, model, test_dataset, batch_size, device, acc_counter, test_samples=1000):
+    def __init__(self, model, test_loader, device, acc_counter, test_samples="all"):
+        """
+
+        :param test_samples: int or str
+        """
+        if test_samples.lower() == "all":
+            test_samples = 0x7fffffff
         self.model = model.to(device)
-        self.test_loader = DataLoader(test_dataset, batch_size, True, pin_memory=True)
-        iter(self.test_loader).__next__()
+        self.test_loader = test_loader
         self.device = device
-        self.num_samples = len(test_dataset)
-        self.batch_size = batch_size
         self.acc_counter = acc_counter
-        self.test_step = math.ceil(test_samples / batch_size)
+        self.batch_size = test_loader.batch_size
+        self.num_samples = len(test_loader) * self.batch_size
+        self.test_step = math.ceil(test_samples / self.batch_size)
 
     def test(self, total=False):
         self.model.eval()
         self.acc_counter.init()
         with torch.no_grad():
             for i, (x, target) in enumerate(self.test_loader):
+                x = x / 255
                 x, target = to(x, target, self.device)
                 pred = self.model(x)
                 self.acc_counter.add(pred, target)

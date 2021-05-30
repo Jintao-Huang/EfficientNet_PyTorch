@@ -2,7 +2,7 @@
 # Time: 2020-6-6
 
 import torch
-from ..detection.utils import to
+from ..tools.utils import to
 
 
 class Predictor:

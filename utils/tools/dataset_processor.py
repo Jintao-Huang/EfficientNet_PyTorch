@@ -7,7 +7,7 @@ import cv2 as cv
 from ..display import imread, resize_max
 
 
-class XMLProcessor:
+class DatasetProcessor:
     """$"""
 
     def __init__(self, root_dir, labels=None):
@@ -31,6 +31,7 @@ class XMLProcessor:
             images_dir = os.path.join(self.root_dir, label)
             label = self.labels_str2int[label]
             for fname in os.listdir(images_dir):
+                if fname.endswith('placeholder'): continue
                 self.image_path_list.append(os.path.join(images_dir, fname))
                 self.target_list.append(label)
 

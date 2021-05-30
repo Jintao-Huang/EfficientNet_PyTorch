@@ -25,7 +25,7 @@ Since I adjusted the model, I modified the state_dict key value of the original 
 ## 使用方式(How to use)
 #### 1. 预测图片(Predict images)
 ```
-python3 pred_image.py
+python3 std_pred_image.py
 ```
 
 #### 2. 简单的训练例子(Simple training examples)
@@ -34,11 +34,18 @@ python3 pred_image.py
 python3 train_example.py
 ```
 
+#### 3. train
+```
+python3 make_dataset.py
+python3 train.py
+python3 pred_image.py
+```
+
 ## 性能
 
 见`docs/`文件夹  
 
 ## 运行环境(environment)
 
-torch 1.2.0  
-torchvision 0.4.0  
+torch 1.8.1  
+torchvision 0.9.0  

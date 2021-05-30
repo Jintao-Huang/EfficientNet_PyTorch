@@ -9,4 +9,4 @@ from .predictor import Predictor
 from .saver import Saver
 from .tester import Tester
 from .trainer import Trainer
-from .xml_processor import XMLProcessor
+from .dataset_processor import DatasetProcessor
