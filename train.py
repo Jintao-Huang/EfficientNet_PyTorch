@@ -4,7 +4,7 @@
 
 import torch
 import torch.nn as nn
-from models.efficientnet import efficientnet_b4, efficientnet_b2, efficientnet_b0
+from models.efficientnet import efficientnet_b4, efficientnet_b2, efficientnet_b0, config_dict
 import os
 from utils.tools import Trainer, Logger, Tester, Checker, Saver, LRScheduler, get_dataset_from_pickle, AccCounter
 from tensorboardX import SummaryWriter
@@ -14,10 +14,6 @@ from models.utils import label_smoothing_cross_entropy as _label_smoothing_cross
 import random
 
 
-# # width_ratio, depth_ratio, resolution[% 32 may be not == 0], dropout_rate
-# 'efficientnet_b0': (1.0, 1.0, 224, 0.2),
-# 'efficientnet_b2': (1.1, 1.2, 260, 0.3),
-# 'efficientnet_b4': (1.4, 1.8, 380, 0.4),
 def label_smoothing_cross_entropy(pred, target):
     return _label_smoothing_cross_entropy(pred, target, smoothing)
 
@@ -28,7 +24,7 @@ loss_fn = label_smoothing_cross_entropy
 weight_decay = 1e-4
 batch_size = 32
 num_workers = 4
-image_size = 260
+image_size = config_dict[efficientnet.__name__][2]
 epochs = (0, 50)
 warm_up_steps = 200  # warm_up迭代次数(只在epoch==0时生效)
 warm_up_bias = 0.05  # warm_up初始bias. 初始weight为0.
